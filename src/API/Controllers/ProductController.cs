@@ -16,16 +16,34 @@ namespace API.Controllers
         private IMediator _mediator;
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
-        [HttpGet("get-all-products")]
+        [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             return Ok(await Mediator.Send(new GetAllProductsQuery()));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAProduct(int id)
+        {
+            return Ok(await Mediator.Send(new GetAProductQuery(id)));
         }
         
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product)
         {
             return Ok(await Mediator.Send(new CreateProductCommand(product.Name, product.Description, product.Price)));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(Product product, int id)
+        {
+            return Ok(await Mediator.Send(new UpdateProductCommand(product.Name, product.Description, product.Price, id)));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            return Ok(await Mediator.Send(new DeleteProductCommand(id)));
         }
     }
 }
