@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
 using DLL.UoW;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace BLL.Command.ProductCommand
 {
-    public class CreateProductCommand : IRequest<Product>
+    public class CreateProductCommand : IRequest<Result<Product>>
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -20,7 +21,7 @@ namespace BLL.Command.ProductCommand
             Price = price;
         }
         
-        public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Product>
+        public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Result<Product>>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IProductRepository _productRepository;
@@ -31,7 +32,7 @@ namespace BLL.Command.ProductCommand
                 _productRepository = productRepository;
             }
 
-            public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+            public async Task<Result<Product>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
             {
                 var product = new Product()
                 {
@@ -41,8 +42,14 @@ namespace BLL.Command.ProductCommand
                 };
 
                 await _productRepository.CreateAsync(product);
-                await _unitOfWork.Commit();
-                return product;
+
+                if (!await _unitOfWork.Commit())
+                {
+                    Result.Failure<Product>("Something went wrong. Please try again later.");
+                }
+                
+                return  Result.Success(product);
+
             }
         }
     }
