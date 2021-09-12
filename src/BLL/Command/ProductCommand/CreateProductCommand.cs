@@ -5,7 +5,7 @@ using DLL.Repository;
 using DLL.UoW;
 using MediatR;
 
-namespace BLL.Command
+namespace BLL.Command.ProductCommand
 {
     public class CreateProductCommand : IRequest<Product>
     {
