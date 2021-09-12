@@ -40,16 +40,14 @@ namespace BLL.Command.ProductCommand
                     Description = request.Description,
                     Price = request.Price
                 };
-
+                
                 await _productRepository.CreateAsync(product);
-
                 if (!await _unitOfWork.Commit())
                 {
-                    Result.Failure<Product>("Something went wrong. Please try again later.");
+                    return Result.Failure<Product>("Something went wrong. Please try again later.");
                 }
-                
                 return  Result.Success(product);
-
+                
             }
         }
     }
