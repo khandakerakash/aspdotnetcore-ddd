@@ -4,6 +4,7 @@ using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
 using DLL.UoW;
+using FluentValidation;
 using MediatR;
 
 namespace BLL.Command.ProductCommand
@@ -50,6 +51,16 @@ namespace BLL.Command.ProductCommand
                 
                 return  Result.Success(product);
             }
+        }
+    }
+    
+    public class ProductCreateRequestValidator : AbstractValidator<CreateProductCommand>
+    {
+        public ProductCreateRequestValidator()
+        {
+            RuleFor(x => x.Name).NotNull().NotEmpty().MinimumLength(4).MaximumLength(120);
+            RuleFor(x => x.Description).NotNull().NotEmpty().MinimumLength(10).MaximumLength(255);
+            RuleFor(x => x.Price).GreaterThanOrEqualTo(0).WithMessage("The price must not have empty.");
         }
     }
 }

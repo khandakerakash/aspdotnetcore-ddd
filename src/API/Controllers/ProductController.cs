@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BLL.Command.ProductCommand;
-using BLL.Contracts;
 using BLL.Query.ProductQuery;
+using BLL.Utils;
 using DLL.Model;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

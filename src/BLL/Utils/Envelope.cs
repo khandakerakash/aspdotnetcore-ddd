@@ -1,7 +1,7 @@
 ﻿using System;
 using BLL.Utils.Extensions;
 
-namespace BLL.Contracts
+namespace BLL.Utils
 {
     public class Envelope<T>
     {
