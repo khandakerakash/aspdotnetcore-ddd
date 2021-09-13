@@ -46,8 +46,8 @@ namespace BLL.Command.ProductCommand
                 {
                     return Result.Failure<Product>("Something went wrong. Please try again later.");
                 }
-                return  Result.Success(product);
                 
+                return  Result.Success(product);
             }
         }
     }

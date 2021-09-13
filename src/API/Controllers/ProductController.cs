@@ -43,13 +43,28 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(Product product, int id)
         {
-            return Ok(await Mediator.Send(new UpdateProductCommand(product.Name, product.Description, product.Price, id)));
+            var response =
+                await Mediator.Send(new UpdateProductCommand(product.Name, product.Description, product.Price, id));
+
+            if (!response.IsSuccess)
+            {
+                return UnprocessableEntity(response.Error);
+            }
+            
+            return Ok(response.Value);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            return Ok(await Mediator.Send(new DeleteProductCommand(id)));
+            var response = await Mediator.Send(new DeleteProductCommand(id));
+            
+            if (!response.IsSuccess)
+            {
+                return UnprocessableEntity(response.Error);
+            }
+            
+            return Ok(response.Value);
         }
     }
 }

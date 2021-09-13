@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
 using DLL.UoW;
@@ -8,7 +9,7 @@ using MediatR;
 
 namespace BLL.Command.ProductCommand
 {
-    public class UpdateProductCommand : IRequest<Product>
+    public class UpdateProductCommand : IRequest<Result<Product>>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -23,7 +24,7 @@ namespace BLL.Command.ProductCommand
             Price = price;
         }
         
-        public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Product>
+        public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Result<Product>>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IProductRepository _productRepository;
@@ -34,7 +35,7 @@ namespace BLL.Command.ProductCommand
                 _productRepository = productRepository;
             }
 
-            public async Task<Product> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+            public async Task<Result<Product>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
             {
                 var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
 
@@ -43,13 +44,19 @@ namespace BLL.Command.ProductCommand
                     product.Name = request.Name;
                     product.Description = request.Description;
                     product.Price = request.Price;
-                    
                     await _productRepository.Update(product);
-                    await _unitOfWork.Commit();
-                    return product;
                 }
-
-                return null;
+                else
+                {
+                    return Result.Failure<Product>("No Data Found.");
+                }
+                
+                if (await _unitOfWork.Commit())
+                {
+                    return Result.Success(product);
+                }
+                
+                return Result.Failure<Product>("Something went wrong. Please try again later.");
             }
         }
     }
