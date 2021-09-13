@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using BLL.Command;
 using BLL.Command.ProductCommand;
+using BLL.Contracts;
 using BLL.Query.ProductQuery;
 using DLL.Model;
 using MediatR;
@@ -20,24 +20,24 @@ namespace API.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
             var response = await Mediator.Send(new GetAllProductsQuery());
-            if(response.IsSuccess) return Ok(response.Value);
-            return UnprocessableEntity(response.Error);
+            if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
+            return UnprocessableEntity(Envelope.Error(response.Error));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAProduct(int id)
         {
             var response = await Mediator.Send(new GetAProductQuery(id));
-            if (response.IsSuccess) return Ok(response.Value);
-            return UnprocessableEntity(response.Error);
+            if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
+            return UnprocessableEntity(Envelope.Error(response.Error));
         }
         
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product)
         {
             var response = await Mediator.Send(new CreateProductCommand(product.Name, product.Description, product.Price));
-            if (response.IsSuccess) return Ok(response.Value);
-            return UnprocessableEntity(response.Error);
+            if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
+            return UnprocessableEntity(Envelope.Error(response.Error));
         }
 
         [HttpPut("{id}")]
@@ -45,16 +45,16 @@ namespace API.Controllers
         {
             var response =
                 await Mediator.Send(new UpdateProductCommand(product.Name, product.Description, product.Price, id));
-            if (response.IsSuccess) return Ok(response.Value);
-            return UnprocessableEntity(response.Error);
+            if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
+            return UnprocessableEntity(Envelope.Error(response.Error));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var response = await Mediator.Send(new DeleteProductCommand(id));
-            if (response.IsSuccess) return Ok(response.Value);
-            return UnprocessableEntity(response.Error);
+            if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
+            return UnprocessableEntity(Envelope.Error(response.Error));
         }
     }
 }

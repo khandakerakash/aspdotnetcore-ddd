@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using BLL.Utils.Extensions;
 using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
@@ -39,7 +40,7 @@ namespace BLL.Command.ProductCommand
             {
                 var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                if (product == null)
+                if (product.HasNoValue())
                 {
                     return Result.Failure<Product>("No Data Found.");
                 }

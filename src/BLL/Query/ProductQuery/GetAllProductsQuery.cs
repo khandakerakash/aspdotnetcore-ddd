@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BLL.Utils.Extensions;
 using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
@@ -25,7 +26,7 @@ namespace BLL.Query.ProductQuery
             {
                 var product =  await _productRepository.QueryAll(null).ToListAsync(cancellationToken);
 
-                if (product.Count == 0)
+                if (product.Count.HasNoValue())
                 {
                     return Result.Failure<List<Product>>("No Data Found.");
                 }
