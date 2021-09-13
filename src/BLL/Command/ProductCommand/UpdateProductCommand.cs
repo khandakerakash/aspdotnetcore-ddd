@@ -39,17 +39,15 @@ namespace BLL.Command.ProductCommand
             {
                 var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                if (product != null)
-                {
-                    product.Name = request.Name;
-                    product.Description = request.Description;
-                    product.Price = request.Price;
-                    await _productRepository.Update(product);
-                }
-                else
+                if (product == null)
                 {
                     return Result.Failure<Product>("No Data Found.");
                 }
+                
+                product.Name = request.Name;
+                product.Description = request.Description;
+                product.Price = request.Price;
+                await _productRepository.Update(product);
                 
                 if (await _unitOfWork.Commit())
                 {

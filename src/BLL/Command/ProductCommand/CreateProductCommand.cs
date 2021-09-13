@@ -42,6 +42,7 @@ namespace BLL.Command.ProductCommand
                 };
                 
                 await _productRepository.CreateAsync(product);
+                
                 if (!await _unitOfWork.Commit())
                 {
                     return Result.Failure<Product>("Something went wrong. Please try again later.");

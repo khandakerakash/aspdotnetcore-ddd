@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
 using MediatR;
 
 namespace BLL.Query.ProductQuery
 {
-    public class GetAProductQuery : IRequest<Product>
+    public class GetAProductQuery : IRequest<Result<Product>>
     {
         public int Id { get; set; }
 
@@ -15,7 +16,7 @@ namespace BLL.Query.ProductQuery
             Id = id;
         }
 
-        public class GetAProductQueryHandler : IRequestHandler<GetAProductQuery, Product>
+        public class GetAProductQueryHandler : IRequestHandler<GetAProductQuery, Result<Product>>
         {
             private readonly IProductRepository _productRepository;
 
@@ -24,9 +25,16 @@ namespace BLL.Query.ProductQuery
                 _productRepository = productRepository;
             }
 
-            public async Task<Product> Handle(GetAProductQuery request, CancellationToken cancellationToken)
+            public async Task<Result<Product>> Handle(GetAProductQuery request, CancellationToken cancellationToken)
             {
-                return await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
+                var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+                if (product == null)
+                {
+                    return Result.Failure<Product>("No Data Found.");
+                }
+                
+                return Result.Success(product);
             }
         }
     }

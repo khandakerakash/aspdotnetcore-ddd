@@ -32,14 +32,12 @@ namespace BLL.Command.ProductCommand
             {
                 var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                if (product != null)
-                {
-                    await _productRepository.Delete(product);
-                }
-                else
+                if (product == null)
                 {
                     return Result.Failure<Product>("No Data Found.");
                 }
+                
+                await _productRepository.Delete(product);
                 
                 if (await _unitOfWork.Commit())
                 {

@@ -19,25 +19,25 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            return Ok(await Mediator.Send(new GetAllProductsQuery()));
+            var response = await Mediator.Send(new GetAllProductsQuery());
+            if(response.IsSuccess) return Ok(response.Value);
+            return UnprocessableEntity(response.Error);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAProduct(int id)
         {
-            return Ok(await Mediator.Send(new GetAProductQuery(id)));
+            var response = await Mediator.Send(new GetAProductQuery(id));
+            if (response.IsSuccess) return Ok(response.Value);
+            return UnprocessableEntity(response.Error);
         }
         
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product)
         {
             var response = await Mediator.Send(new CreateProductCommand(product.Name, product.Description, product.Price));
-
-            if (!response.IsSuccess)
-            {
-                return UnprocessableEntity(response.Error);
-            }
-            return Ok(response.Value);
+            if (response.IsSuccess) return Ok(response.Value);
+            return UnprocessableEntity(response.Error);
         }
 
         [HttpPut("{id}")]
@@ -45,26 +45,16 @@ namespace API.Controllers
         {
             var response =
                 await Mediator.Send(new UpdateProductCommand(product.Name, product.Description, product.Price, id));
-
-            if (!response.IsSuccess)
-            {
-                return UnprocessableEntity(response.Error);
-            }
-            
-            return Ok(response.Value);
+            if (response.IsSuccess) return Ok(response.Value);
+            return UnprocessableEntity(response.Error);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var response = await Mediator.Send(new DeleteProductCommand(id));
-            
-            if (!response.IsSuccess)
-            {
-                return UnprocessableEntity(response.Error);
-            }
-            
-            return Ok(response.Value);
+            if (response.IsSuccess) return Ok(response.Value);
+            return UnprocessableEntity(response.Error);
         }
     }
 }
