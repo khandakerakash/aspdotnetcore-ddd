@@ -12,14 +12,14 @@ namespace BLL.Command.ProductCommand
 {
     public class UpdateProductCommand : IRequest<Result<Product>>
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
 
         public UpdateProductCommand(string name, string description, decimal price, int id)
         {
-            Id = id;
+            ProductId = id;
             Name = name;
             Description = description;
             Price = price;
@@ -38,7 +38,7 @@ namespace BLL.Command.ProductCommand
 
             public async Task<Result<Product>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
             {
-                var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
+                var product = await _productRepository.FirstOrDefaultAsync(x => x.ProductId == request.ProductId);
 
                 if (product.HasNoValue())
                 {

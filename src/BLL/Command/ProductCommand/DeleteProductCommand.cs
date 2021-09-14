@@ -31,7 +31,7 @@ namespace BLL.Command.ProductCommand
 
             public async Task<Result<Product>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
             {
-                var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
+                var product = await _productRepository.FirstOrDefaultAsync(x => x.ProductId == request.Id);
 
                 if (product.HasNoValue())
                 {

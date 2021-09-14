@@ -14,6 +14,7 @@ namespace DLL
                 options.UseSqlServer(configuration.GetConnectionString("CqrsPatternContext")));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IBrandRepository, BrandRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
         }
     }

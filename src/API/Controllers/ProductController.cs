@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product)
         {
-            var response = await Mediator.Send(new CreateProductCommand(product.Name, product.Description, product.Price));
+            var response = await Mediator.Send(new CreateProductCommand(product.Code,product.Name, product.Description, product.Price));
             if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
             return UnprocessableEntity(Envelope.Error(response.Error));
         }

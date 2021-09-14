@@ -10,11 +10,11 @@ namespace BLL.Query.ProductQuery
 {
     public class GetAProductQuery : IRequest<Result<Product>>
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
 
         public GetAProductQuery(int id)
         {
-            Id = id;
+            ProductId = id;
         }
 
         public class GetAProductQueryHandler : IRequestHandler<GetAProductQuery, Result<Product>>
@@ -28,7 +28,7 @@ namespace BLL.Query.ProductQuery
 
             public async Task<Result<Product>> Handle(GetAProductQuery request, CancellationToken cancellationToken)
             {
-                var product = await _productRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
+                var product = await _productRepository.FirstOrDefaultAsync(x => x.ProductId == request.ProductId);
 
                 if (product.HasNoValue())
                 {
