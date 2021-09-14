@@ -25,8 +25,9 @@ namespace BLL.Query.ProductQuery
             public async Task<Result<List<Product>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
             {
                 var product =  await _productRepository.QueryAll(null).ToListAsync(cancellationToken);
-
-                if (product.Count.HasNoValue())
+                
+                // var product = await _productRepository.QueryAll(x=>x.ProductId == pr).ToListAsync(cancellationToken);
+                if (product.Count == 0)
                 {
                     return Result.Failure<List<Product>>("No Data Found.");
                 }

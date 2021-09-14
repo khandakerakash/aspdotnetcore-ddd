@@ -14,12 +14,12 @@ namespace BLL.Command.BrandCommand
     public class CreateBrandCommand : IRequest<Result<Brand>>
     {
         public string Name { get; set; }
-        public List<Product>? Products { get; set; }
+        public List<BrandProduct> BrandProducts { get; set; }
 
         public CreateBrandCommand(string name)
         {
             Name = name;
-            this.Products = new List<Product>();
+            this.BrandProducts = new List<BrandProduct>();
         }
         
         public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, Result<Brand>>

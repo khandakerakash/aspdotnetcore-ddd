@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using BLL.Utils.Extensions;
 using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
@@ -15,13 +16,15 @@ namespace BLL.Command.ProductCommand
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+        //public List<BrandProduct> BrandProducts { get; set; }
 
-        public CreateProductCommand(string code, string name, string description, decimal price)
+        public CreateProductCommand(string code, string name, string description, decimal productPrice, decimal price)
         {
             Code = code;
             Name = name;
             Description = description;
             Price = price;
+            //this.BrandProducts = new List<BrandProduct>();
         }
         
         public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Result<Product>>
@@ -37,11 +40,18 @@ namespace BLL.Command.ProductCommand
 
             public async Task<Result<Product>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
             {
+                if (request.Code.HasNoValue())
+                {
+                    return Result.Failure<Product>("Product code must not have empty.");
+                }
+                
                 var product = new Product()
                 {
+                    Code = request.Code,
                     Name = request.Name,
                     Description = request.Description,
-                    Price = request.Price
+                    Price = request.Price,
+                    //BrandProducts = request.BrandProducts.FirstOrDefault(x=>x.ProductId)
                 };
                 
                 await _productRepository.CreateAsync(product);
