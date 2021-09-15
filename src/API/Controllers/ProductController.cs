@@ -32,6 +32,14 @@ namespace API.Controllers
             return UnprocessableEntity(Envelope.Error(response.Error));
         }
         
+        [HttpGet("brand-wise-product/{brandId}")]
+        public async Task<IActionResult> GetBrandWieProduct(int brandId)
+        {
+            var res = await Mediator.Send(new GetBrandWiseProductQuery(brandId));
+            if (res.IsSuccess) return Ok(Envelope.Ok(res.Value));
+            return Ok(Envelope.Error(res.Error));
+        }
+        
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product)
         {
