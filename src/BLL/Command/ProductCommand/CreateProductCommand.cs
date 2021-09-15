@@ -16,25 +16,27 @@ namespace BLL.Command.ProductCommand
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        //public List<BrandProduct> BrandProducts { get; set; }
-
-        public CreateProductCommand(string code, string name, string description, decimal productPrice, decimal price)
+        public int BrandId { get; set; }
+        
+        public CreateProductCommand(string code, string name, string description, decimal price, int productBrandId)
         {
             Code = code;
             Name = name;
             Description = description;
             Price = price;
-            //this.BrandProducts = new List<BrandProduct>();
+            BrandId = productBrandId;
         }
         
         public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Result<Product>>
         {
             private readonly IUnitOfWork _unitOfWork;
+            private readonly IBrandRepository _brandRepository;
             private readonly IProductRepository _productRepository;
 
-            public CreateProductCommandHandler(IUnitOfWork unitOfWork, IProductRepository productRepository)
+            public CreateProductCommandHandler(IUnitOfWork unitOfWork, IBrandRepository brandRepository, IProductRepository productRepository)
             {
                 _unitOfWork = unitOfWork;
+                _brandRepository = brandRepository;
                 _productRepository = productRepository;
             }
 
@@ -44,6 +46,13 @@ namespace BLL.Command.ProductCommand
                 {
                     return Result.Failure<Product>("Product code must not have empty.");
                 }
+
+                var brandIdValidation = await BrandIdValidate(request.BrandId);
+                
+                if (!brandIdValidation)
+                {
+                    return Result.Failure<Product>("Invalid brand Id.");
+                }
                 
                 var product = new Product()
                 {
@@ -51,7 +60,7 @@ namespace BLL.Command.ProductCommand
                     Name = request.Name,
                     Description = request.Description,
                     Price = request.Price,
-                    //BrandProducts = request.BrandProducts.FirstOrDefault(x=>x.ProductId)
+                    BrandId = request.BrandId
                 };
                 
                 await _productRepository.CreateAsync(product);
@@ -62,6 +71,14 @@ namespace BLL.Command.ProductCommand
                 }
                 
                 return  Result.Success(product);
+            }
+
+            private async Task<bool> BrandIdValidate(int requestBrandId)
+            {
+                var isBrandExists = await _brandRepository.FirstOrDefaultAsync(x => x.BrandId == requestBrandId);
+                if (isBrandExists.HasValue())
+                    return true;
+                return false;
             }
         }
     }

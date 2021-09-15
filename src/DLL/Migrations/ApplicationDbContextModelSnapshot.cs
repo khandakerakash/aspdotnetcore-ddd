@@ -33,27 +33,15 @@ namespace DLL.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("DLL.Model.BrandProduct", b =>
-                {
-                    b.Property<int>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BrandId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("BrandProducts");
-                });
-
             modelBuilder.Entity("DLL.Model.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
@@ -69,36 +57,25 @@ namespace DLL.Migrations
 
                     b.HasKey("ProductId");
 
+                    b.HasIndex("BrandId");
+
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("DLL.Model.BrandProduct", b =>
-                {
-                    b.HasOne("DLL.Model.Brand", "Brand")
-                        .WithMany("BrandProducts")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DLL.Model.Product", "Product")
-                        .WithMany("BrandProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("DLL.Model.Brand", b =>
-                {
-                    b.Navigation("BrandProducts");
                 });
 
             modelBuilder.Entity("DLL.Model.Product", b =>
                 {
-                    b.Navigation("BrandProducts");
+                    b.HasOne("DLL.Model.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("DLL.Model.Brand", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

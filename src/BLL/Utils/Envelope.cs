@@ -5,6 +5,7 @@ namespace BLL.Utils
 {
     public class Envelope<T>
     {
+        // ReSharper disable once MemberCanBeProtected.Global
         protected internal Envelope(T body, string errorMessage)
         {
             Body = body;
@@ -21,7 +22,8 @@ namespace BLL.Utils
 
     public class Envelope : Envelope<string>
     {
-        private Envelope(string errorMessage) : base(errorMessage.HasValue() ? null : "success", errorMessage)
+        private Envelope(string errorMessage)
+            : base(errorMessage.HasValue() ? null : "success", errorMessage)
         {
         }
 

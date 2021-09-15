@@ -6,7 +6,6 @@ namespace DLL.Model
     {
         public int BrandId { get; set; }
         public string Name { get; set; }
-
-        public List<BrandProduct> BrandProducts { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

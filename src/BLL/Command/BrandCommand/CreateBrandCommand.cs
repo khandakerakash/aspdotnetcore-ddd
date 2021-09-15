@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Utils.Extensions;
@@ -14,12 +13,10 @@ namespace BLL.Command.BrandCommand
     public class CreateBrandCommand : IRequest<Result<Brand>>
     {
         public string Name { get; set; }
-        public List<BrandProduct> BrandProducts { get; set; }
 
         public CreateBrandCommand(string name)
         {
             Name = name;
-            this.BrandProducts = new List<BrandProduct>();
         }
         
         public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, Result<Brand>>
@@ -35,16 +32,21 @@ namespace BLL.Command.BrandCommand
 
             public async Task<Result<Brand>> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
             {
-                if (request.Name.HasNoValue())
+                if (request.Name.HasEmpty() || request.Name.HasNoValue())
                 {
                     return Result.Failure<Brand>("Brand name must not have empty.");
+                }
+                
+                var isBrandExists = await _brandRepository.FirstOrDefaultAsync(x => x.Name == request.Name);
+                if (isBrandExists.HasValue())
+                {
+                    return Result.Failure<Brand>("The brand name already exists in our system.");
                 }
                 
                 var brand = new Brand()
                 {
                     Name = request.Name
                 };
-
                 await _brandRepository.CreateAsync(brand);
 
                 if (!await _unitOfWork.Commit())

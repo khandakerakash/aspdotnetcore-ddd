@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class ManyToManyRltBetweenBrandAndProductModel : Migration
+    public partial class OneToManyRtlBetweenBrandAndProduct : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,53 +28,33 @@ namespace DLL.Migrations
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BrandProducts",
-                columns: table => new
-                {
-                    BrandId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BrandProducts", x => new { x.BrandId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_BrandProducts_Brands_BrandId",
+                        name: "FK_Products_Brands_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "BrandId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BrandProducts_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BrandProducts_ProductId",
-                table: "BrandProducts",
-                column: "ProductId");
+                name: "IX_Products_BrandId",
+                table: "Products",
+                column: "BrandId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BrandProducts");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Brands");
-
-            migrationBuilder.DropTable(
-                name: "Products");
         }
     }
 }

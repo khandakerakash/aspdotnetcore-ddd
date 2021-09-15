@@ -15,18 +15,19 @@ namespace BLL.Query.ProductQuery
     {
         public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, Result<List<Product>>>
         {
+            private readonly IBrandRepository _brandRepository;
             private readonly IProductRepository _productRepository;
 
-            public GetAllProductsQueryHandler(IProductRepository productRepository)
+            public GetAllProductsQueryHandler(IBrandRepository brandRepository, IProductRepository productRepository)
             {
+                _brandRepository = brandRepository;
                 _productRepository = productRepository;
             }
 
             public async Task<Result<List<Product>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
             {
-                var product =  await _productRepository.QueryAll(null).ToListAsync(cancellationToken);
+                var product = await _productRepository.QueryAll().Include(x => x.Brand).ToListAsync(cancellationToken);
                 
-                // var product = await _productRepository.QueryAll(x=>x.ProductId == pr).ToListAsync(cancellationToken);
                 if (product.Count == 0)
                 {
                     return Result.Failure<List<Product>>("No Data Found.");
