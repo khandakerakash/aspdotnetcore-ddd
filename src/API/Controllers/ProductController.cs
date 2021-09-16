@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using API.Contracts.Request;
 using BLL.Command.ProductCommand;
+using BLL.Contract;
 using BLL.Query.ProductQuery;
 using BLL.Utils;
 using DLL.Model;
@@ -17,9 +19,9 @@ namespace API.Controllers
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductRequest queryRequest)
         {
-            var response = await Mediator.Send(new GetAllProductsQuery());
+            var response = await Mediator.Send(new GetAllProductsQuery(queryRequest));
             if(response.IsSuccess) return Ok(Envelope.Ok(response.Value));
             return UnprocessableEntity(Envelope.Error(response.Error));
         }

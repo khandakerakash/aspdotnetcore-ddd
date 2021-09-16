@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using BLL.Utils.Extensions;
+using BLL.Contract;
 using CSharpFunctionalExtensions;
 using DLL.Model;
 using DLL.Repository;
@@ -13,6 +14,12 @@ namespace BLL.Query.ProductQuery
 {
     public class GetAllProductsQuery : IRequest<Result<List<Product>>>
     {
+        public ProductRequest QueryRequest { get; set; }
+        public GetAllProductsQuery(ProductRequest queryRequest)
+        {
+            QueryRequest = queryRequest;
+        }
+
         public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, Result<List<Product>>>
         {
             private readonly IBrandRepository _brandRepository;
@@ -26,7 +33,8 @@ namespace BLL.Query.ProductQuery
 
             public async Task<Result<List<Product>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
             {
-                var product = await _productRepository.QueryAll().Include(x => x.Brand).ToListAsync(cancellationToken);
+                var product = await _productRepository.QueryAll(entity => entity.Code.Contains(request.QueryRequest.Code)
+                ).Include(x => x.Brand).ToListAsync(cancellationToken);
                 
                 if (product.Count == 0)
                 {
