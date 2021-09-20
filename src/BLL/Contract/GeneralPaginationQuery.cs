@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace API.Contracts.Request
+namespace BLL.Contract
 {
     public class GeneralPaginationQuery
     {
